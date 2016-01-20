@@ -12,9 +12,15 @@ import com.xyrality.gameworlds.network.model.WorldsResponse;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Created by Mohsen on 1/20/16.
+ * A game worlds list that shows location and status.
+ */
 public class WorldsActivity extends AppCompatActivity {
     public static final String WORLDS_DATA = "worlds_data";
     final static String TAG = WorldsActivity.class.getSimpleName();
+
+    // butterknife UI references.
     @Bind(R.id.worlds_recyclerview)
     RecyclerView worldsRecyclerView;
 
@@ -25,11 +31,11 @@ public class WorldsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_worlds);
 
-        // Set up the Worlds list.
+        // Set up the UI.
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // load data
+        // load data to list
         worldsData = (WorldsResponse) getIntent().getSerializableExtra(WORLDS_DATA);
 
         if (worldsData != null) {

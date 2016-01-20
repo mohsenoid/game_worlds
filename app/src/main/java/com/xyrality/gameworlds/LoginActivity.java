@@ -26,24 +26,22 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
+ * Created by Mohsen on 1/20/16.
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
     final static String TAG = LoginActivity.class.getSimpleName();
 
-    // UI references.
-    @Bind(R.id.email)
-    EditText mEmailView;
-
-    @Bind(R.id.password)
-    EditText mPasswordView;
-
-    @Bind(R.id.login_progress)
-    View mProgressView;
-
-    @Bind(R.id.login_form)
-    View mLoginFormView;
     boolean loginIsInProgress = false;
+    // butterknife UI references.
+    @Bind(R.id.email)
+    EditText emailEditText;
+    @Bind(R.id.password)
+    EditText passwordEditText;
+    @Bind(R.id.login_progress)
+    View progressView;
+    @Bind(R.id.login_form)
+    View loginFormView;
     private NetworkHelper networkhelper;
 
     @OnClick(R.id.email_sign_in_button)
@@ -52,32 +50,36 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        // Reset login fields errors.
+        emailEditText.setError(null);
+        passwordEditText.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        // Check for a valid password.
+        if (TextUtils.isEmpty(password)) {
+            passwordEditText.setError(getString(R.string.error_field_required));
+            focusView = passwordEditText;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
+            passwordEditText.setError(getString(R.string.error_invalid_password));
+            focusView = passwordEditText;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            emailEditText.setError(getString(R.string.error_field_required));
+            focusView = emailEditText;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            emailEditText.setError(getString(R.string.error_invalid_email));
+            focusView = emailEditText;
             cancel = true;
         }
 
@@ -86,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
+            // Show a progress spinner, and kick off a retrofit task to
             // perform the user login attempt.
             showProgress(true);
             networkhelper.login(email, password);
@@ -108,16 +110,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Set up the login form.
+        // Set up the login form UI.
         ButterKnife.bind(this);
 
         networkhelper = NetworkHelper.getInstance(this);
     }
 
+    // email validation method
     private boolean isEmailValid(String email) {
         return email.contains("@");
     }
 
+    // password validation method
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
@@ -133,40 +137,44 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            loginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
                 }
             });
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        //register EventBus
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
+        //unregister EventBus
         EventBus.getDefault().unregister(this);
+
         super.onStop();
     }
 
@@ -181,10 +189,8 @@ public class LoginActivity extends AppCompatActivity {
             worldIntent.putExtra(WorldsActivity.WORLDS_DATA, loginEvent.getWorldsResponse());
             startActivity(worldIntent);
         } else {
-//            mPasswordView.setError(getString(R.string.error_incorrect_password));
-//            mPasswordView.requestFocus();
-
-            Snackbar.make(mLoginFormView, loginEvent.getThrowable().getMessage(), Snackbar.LENGTH_LONG).show();
+            // something goes wrong!
+            Snackbar.make(loginFormView, loginEvent.getThrowable().getMessage(), Snackbar.LENGTH_LONG).show();
         }
     }
 

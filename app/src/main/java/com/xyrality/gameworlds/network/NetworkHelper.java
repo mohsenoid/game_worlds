@@ -16,6 +16,7 @@ import retrofit2.Retrofit;
 
 /**
  * Created by Mohsen on 1/20/16.
+ * Singletone Network manager
  */
 public class NetworkHelper {
     final static String TAG = NetworkHelper.class.getSimpleName();
@@ -71,17 +72,16 @@ public class NetworkHelper {
 
     }
 
+    // device info method
     private String deviceTypeGenerator() {
-        String result = String.format("%s %s", android.os.Build.MODEL, android.os.Build.VERSION.RELEASE);
-        return result;
+        return String.format("%s %s", android.os.Build.MODEL, android.os.Build.VERSION.RELEASE);
     }
 
+    //device unique id method
     private String deviceUniqueIdGenerator() {
         WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
-        String result = info.getMacAddress();
-
-        return result;
+        return info.getMacAddress();
     }
 
 }
