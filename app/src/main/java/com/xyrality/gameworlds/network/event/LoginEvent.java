@@ -1,18 +1,20 @@
 package com.xyrality.gameworlds.network.event;
 
-import com.xyrality.gameworlds.network.model.LoginResponse;
+import com.xyrality.gameworlds.network.model.WorldsResponse;
+
+import java.io.Serializable;
 
 /**
  * Created by Mohsen on 1/20/16.
  */
 public class LoginEvent {
     boolean success;
-    LoginResponse loginResponse;
+    WorldsResponse worldsResponse;
     Throwable throwable;
 
-    public LoginEvent(boolean success, LoginResponse loginResponse) {
+    public LoginEvent(boolean success, WorldsResponse worldsResponse) {
         this.success = success;
-        this.loginResponse = loginResponse;
+        this.worldsResponse = worldsResponse;
     }
 
     public LoginEvent(Throwable throwable) {
@@ -28,12 +30,12 @@ public class LoginEvent {
         this.success = success;
     }
 
-    public LoginResponse getLoginResponse() {
-        return loginResponse;
+    public WorldsResponse getWorldsResponse() {
+        return worldsResponse;
     }
 
-    public void setLoginResponse(LoginResponse loginResponse) {
-        this.loginResponse = loginResponse;
+    public void setWorldsResponse(WorldsResponse worldsResponse) {
+        this.worldsResponse = worldsResponse;
     }
 
     public Throwable getThrowable() {

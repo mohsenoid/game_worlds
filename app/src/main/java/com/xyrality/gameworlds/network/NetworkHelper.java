@@ -5,7 +5,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 import com.xyrality.gameworlds.network.event.LoginEvent;
-import com.xyrality.gameworlds.network.model.LoginResponse;
+import com.xyrality.gameworlds.network.model.WorldsResponse;
 
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -49,12 +49,12 @@ public class NetworkHelper {
     }
 
     public void login(String login, String password) {
-        Call<LoginResponse> loginResponseCall = null;
+        Call<WorldsResponse> loginResponseCall = null;
         try {
             loginResponseCall = api.login(login, password, deviceType, deviceId);
-            loginResponseCall.enqueue(new Callback<LoginResponse>() {
+            loginResponseCall.enqueue(new Callback<WorldsResponse>() {
                 @Override
-                public void onResponse(Response<LoginResponse> response) {
+                public void onResponse(Response<WorldsResponse> response) {
                     EventBus.getDefault().post(new LoginEvent(response.isSuccess(), response.body()));
                 }
 

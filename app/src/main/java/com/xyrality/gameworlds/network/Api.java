@@ -1,6 +1,6 @@
 package com.xyrality.gameworlds.network;
 
-import com.xyrality.gameworlds.network.model.LoginResponse;
+import com.xyrality.gameworlds.network.model.WorldsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -16,7 +16,7 @@ public interface Api {
     @FormUrlEncoded
     @Headers({"Accept: application/json"})
     @POST("/XYRALITY/WebObjects/BKLoginServer.woa/wa/worlds")
-    Call<LoginResponse> login(
+    Call<WorldsResponse> login(
             @Field("login") String login,
             @Field("password") String password,
             @Field("deviceType") String deviceType,

@@ -1,9 +1,11 @@
 package com.xyrality.gameworlds.network.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Mohsen on 1/20/16.
  */
-public class WorldStatus {
+public class WorldStatus implements Serializable {
     private String id;
     private String description;
 

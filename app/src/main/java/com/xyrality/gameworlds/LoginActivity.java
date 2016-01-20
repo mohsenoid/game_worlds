@@ -3,6 +3,7 @@ package com.xyrality.gameworlds;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import de.greenrobot.event.Subscribe;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
+    final static String TAG = LoginActivity.class.getSimpleName();
 
     // UI references.
     @Bind(R.id.email)
@@ -170,17 +172,19 @@ public class LoginActivity extends AppCompatActivity {
 
     // This method will be called when a LoginEvent is posted
     @Subscribe
-    public void onEvent(LoginEvent event) {
+    public void onEvent(LoginEvent loginEvent) {
         showProgress(false);
         loginIsInProgress = false;
 
-        if (event.isSuccess() && event.getLoginResponse() != null) {
-            finish();
+        if (loginEvent.isSuccess() && loginEvent.getWorldsResponse() != null) {
+            Intent worldIntent = new Intent(this, WorldsActivity.class);
+            worldIntent.putExtra(WorldsActivity.WORLDS_DATA, loginEvent.getWorldsResponse());
+            startActivity(worldIntent);
         } else {
 //            mPasswordView.setError(getString(R.string.error_incorrect_password));
 //            mPasswordView.requestFocus();
 
-            Snackbar.make(mLoginFormView, event.getThrowable().getMessage(), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mLoginFormView, loginEvent.getThrowable().getMessage(), Snackbar.LENGTH_LONG).show();
         }
     }
 

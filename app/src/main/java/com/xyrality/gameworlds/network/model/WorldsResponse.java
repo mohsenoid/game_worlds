@@ -1,9 +1,11 @@
 package com.xyrality.gameworlds.network.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Mohsen on 1/20/16.
  */
-public class LoginResponse {
+public class WorldsResponse implements Serializable {
     private String facebookLoginSwitchOn;
     private String time;
     private World[] allAvailableWorlds;

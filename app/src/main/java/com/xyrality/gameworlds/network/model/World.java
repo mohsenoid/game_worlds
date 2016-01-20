@@ -1,9 +1,11 @@
 package com.xyrality.gameworlds.network.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Mohsen on 1/20/16.
  */
-public class World {
+public class World implements Serializable {
     private String id;
     private String mapURL;
     private String name;
